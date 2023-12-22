@@ -1,6 +1,5 @@
-const jwt = require('jsonwebtoken');
-const jwtPassword = 'secret';
-
+const jwt = require("jsonwebtoken");
+const jwtPassword = "secret";
 
 /**
  * Generates a JWT for a given username and password.
@@ -14,7 +13,27 @@ const jwtPassword = 'secret';
  *                        the password does not meet the length requirement.
  */
 function signJwt(username, password) {
-    // Your code here
+  // Your code here
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (password.length < 6 || !emailRegex.test(username)) return null;
+
+  try {
+    const token = jwt.sign(
+      {
+        username,
+        password,
+      },
+      jwtPassword
+    );
+    const decoded = jwt.verify(token, jwtPassword);
+  } catch (error) {
+    console.log(error);
+  }
+  // const decoded = jwt.decode(token);
+
+  // return decoded;
+  return token;
 }
 
 /**
@@ -26,7 +45,16 @@ function signJwt(username, password) {
  *                    using the secret key.
  */
 function verifyJwt(token) {
-    // Your code here
+  // Your code here
+
+  if (typeof token !== "string") return false;
+
+  const decoded = jwt.verify(token, jwtPassword);
+  if (decoded) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 /**
@@ -37,9 +65,15 @@ function verifyJwt(token) {
  *                         Returns false if the token is not a valid JWT format.
  */
 function decodeJwt(token) {
-    // Your code here
-}
+  // Your code here
 
+  const decoded = jwt.verify(token, jwtPassword);
+  if (decoded) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 module.exports = {
   signJwt,
