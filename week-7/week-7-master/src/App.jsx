@@ -1,46 +1,73 @@
-import { useContext, useState } from "react"
+import { useContext, useState } from "react";
 import { CountContext } from "./context";
-import { Navigate } from "react-router-dom";
-
+import {
+  RecoilRoot,
+  selector,
+  useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
+} from "recoil";
+import { countAtom } from "./store/atoms/count";
 
 function App() {
-  const [count, setCount] = useState(0);  
-  // wrap anyone that wants to use the teleported value inside a provider
-  // recoil, redux, Themes in mUI
   return (
     <div>
-      <CountContext.Provider value={count}>
-        <Count setCount={setCount} />
-      </CountContext.Provider>
+      <RecoilRoot>
+        <Count />
+      </RecoilRoot>
     </div>
-  )
+  );
 }
-
-function Count({setCount}) {
-  return <div>
-    <CountRenderer />
-    <Buttons setCount={setCount} />
-  </div>
+function Count() {
+  console.log("re-render");
+  return (
+    <div>
+      <CountRenderer />
+      <Buttons />
+    </div>
+  );
 }
 
 function CountRenderer() {
-  const count = useContext(CountContext);
-  return <div>
-    {count}
-  </div>
+  const count = useRecoilValue(countAtom);
+  // const [message, setMessage] = useState("");
+  // if (count % 2 === 0) {
+  //   setMessage("Even");
+  // } else {
+  //   setMessage("Odd");
+  // }
+
+  return (
+    <div>
+      <b>{count}</b>
+      {/* <p>{message}</p> */}
+    </div>
+  );
 }
 
-function Buttons({setCount}) {
-  const count = useContext(CountContext);
-  return <div>
-    <button onClick={() => {
-      setCount(count + 1)
-    }}>Increase</button>
+function Buttons() {
+  console.log("button re-rendered");
+  // const setCount = useSetRecoilState(countAtom);
+  const [count, setCount] = useRecoilState(countAtom);
+  return (
+    <div>
+      <button
+        onClick={() => {
+          setCount(count + 1);
+        }}
+      >
+        Increase
+      </button>
 
-    <button onClick={() => {
-      setCount(count - 1)
-    }}>Decrease</button>
-  </div>
+      <button
+        onClick={() => {
+          setCount(count - 1);
+        }}
+      >
+        Decrease
+      </button>
+    </div>
+  );
 }
 
-export default App
+export default App;
